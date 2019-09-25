@@ -20,11 +20,11 @@ import javax.swing.Timer;
 
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	// size of jframe
-	int screen_width 	= 1920;
-	int screen_height 	= 1800;
+	//int screen_width 	= 1920;
+	//int screen_height 	= 1800;
 	
-	//int screen_width 	= 920;
-	//int screen_height 	= 800;
+	int screen_width 	= 920;
+	int screen_height 	= 800;
 
 	// reminder of primitive types
 	// setup player variables
@@ -48,7 +48,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	int[]eVy = new int[totalEs];
 	
 	// food variables and arrays
-	int totalFood = 1000;
+	int totalFood = 100;
 	int [] fx = new int [totalFood];
 	int [] fy = new int [totalFood];
 	
@@ -63,18 +63,21 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		g.fillRect(0, 0, screen_width, screen_height);
 		// paint the player
 	
-		g.setColor(new Color(0, 125, 125));
-		g.fillOval(px, py, pw, ph);
-		
+		//g.setColor(new Color(0, 125, 125));
+
+
 		for (int i = 0; i < eXs.length; i++){
-		g.setColor(eCs[i]); // set color for this Cell!!
-		g.fillOval(eXs[i], eYs[i], eWs[i], eWs[i]);
+			g.setColor(eCs[i]); // set color for this Cell!!
+			g.fillOval(eXs[i], eYs[i], eWs[i], eWs[i]);
 		}
 		for (int i = 0; i<fx.length; i++){
 			g.setColor(Color.GREEN);
-			g.fillOval(fx[i], fy[i], 10, 10);
+			g.fillOval(fx[i], fy[i], 5, 5);
 		}
-		
+
+		g.setColor(Color.MAGENTA);
+		g.fillOval(px, py, pw, ph);
+
 	}// end of paint method - put code above for anything dealing with drawing -
 	
 	
@@ -137,7 +140,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 	public Driver(){
 		JFrame f = new JFrame();
-		f.setTitle("Pong");
+		f.setTitle("Agario");
 		f.setSize(screen_width, screen_height);
 		f.setBackground(Color.BLACK);
 		f.setResizable(false);
@@ -153,9 +156,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		
 		int cntr = 0;
 		while (cntr < eXs.length){
-			eXs[cntr] = (int)(Math.random()*(screen_height)+0);
-			
-			
+			eXs[cntr] = (int)(Math.random()*(screen_width)+0);
+			eYs[cntr] = (int)(Math.random()*(screen_height)+0);
+			eWs[cntr] = 30;
 			eVx[cntr] = (int)(Math.random()*(15)+-7);
 			// add y velocity
 			eVy[cntr] = (int)(Math.random()*(15)+-7);
@@ -164,45 +167,26 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		//loops for something i forgot
 		int cntr2 = 0;
 		while(cntr2< fx.length) {
-			fx[cntr2] = (int) (Math.random()* (9001) - 4500);
-			fy[cntr2] = (int) (Math.random()* (9001) - 4500);
+			fx[cntr2] = (int) (Math.random()*(screen_width)+0);
+			fy[cntr2] = (int) (Math.random()*(screen_height)+0);
 			cntr2++;
-			
 		}
 		
 		
 		//for - loop time
-		for(int yCounter = 0; yCounter < eYs.length; yCounter++){
-			eYs[yCounter] = (int)(Math.random()*(screen_height)+0);
-			eWs[yCounter] = 30;
-		}
+		//for(int yCounter = 0; yCounter < eYs.length; yCounter++){
+		//	eYs[yCounter] = (int)(Math.random()*(screen_height)+0);
+	    //		eWs[yCounter] = 30;
+		//}
 		
 		
 		//colors - are on you! to do - student
-		for(int c = 0; c < eCs.length; c++){
-		
-
-		
-			
-		// student to do: generate random numbers for red, green, and blue
-		//Color newColor = new Color(128, 0, 128);
-		//eCs[c] = newColor;
-	
-		int counter = 0;
-		while (counter<100){
-				
+		for (int c = 0; c < eCs.length; c++) {
 			int red = (int)(Math.random()*(255+1)+0);
 			int green = (int)(Math.random()*(255+1)+0);
 			int blue = (int)(Math.random()*(255+1)+0);
 			Color newColor = new Color(red, green, blue);
 			eCs[c] = newColor;
-			counter++;
-	
-			}	
-		
-		
-		
-		
 		}
 		
 
