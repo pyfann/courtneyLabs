@@ -28,14 +28,19 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	// reminder of primitive types
 	// setup player variables
+	int pr = 30;
 	// position variables
-	int pw = 20;
-	int px = screen_width/2 - pw/2;// relative to screen_width and player width
-	int py = screen_height/2 - pw/2;
-	int ph = 20;
-	
+	int px = screen_width/2;   // relative to screen_width and player width
+	int py = screen_height/2;
+	// player velocity variables
+	int pvx = 0;
+	int pvy = 0;
+
+	// player velocity
+	int pv = 15;
+
 	// setup variables for Cells
-	int totalEs = 100;
+	int totalEs = 20;
 	
 	// left side = declare a reference to an array
 	int [] eXs = new int [totalEs];
@@ -48,10 +53,13 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	int[]eVy = new int[totalEs];
 	
 	// food variables and arrays
-	int totalFood = 100;
+	int totalFood = 1000;
 	int [] fx = new int [totalFood];
 	int [] fy = new int [totalFood];
-	
+	Color[] fc = new Color [totalFood];
+	// food size / radius
+	int fr = 10;
+
 	
 	
 	// reading a val from a 1d array
@@ -71,12 +79,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			g.fillOval(eXs[i], eYs[i], eWs[i], eWs[i]);
 		}
 		for (int i = 0; i<fx.length; i++){
-			g.setColor(Color.GREEN);
-			g.fillOval(fx[i], fy[i], 5, 5);
+			g.setColor(fc[i]);
+			g.fillOval(fx[i], fy[i], fr, fr);
 		}
 
-		g.setColor(Color.MAGENTA);
-		g.fillOval(px, py, pw, ph);
+		g.setColor(Color.CYAN);
+		g.fillOval(px, py, pr, pr);
 
 	}// end of paint method - put code above for anything dealing with drawing -
 	
@@ -96,8 +104,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			
 			//enemy x and y now are also altered
 			//due to player "velocity"
-			eXs[i] += pvx;
-			eYs[i] +=pvy;
+			// eXs[i] += pvx;
+			// eYs[i] +=pvy;
 			
 			//int x1 = eXs;// food or enemy x and y
 			//int y1 = eYs;
@@ -114,16 +122,47 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			
 		}
 		
-			// update food based on player "moving"
-			//for (int F = 0; F <fx.length; F++);
-			
-			
-		
-		
-		
-		
-		
-		
+		// update food based on player "moving"
+        double xDiff =0;
+		double yDiff = 0;
+        double distSq = 0;
+
+		for (int i = 0; i <fx.length; i++)
+		{
+			// determine player and food collision/eating
+			// use the circle center point for diff calculations
+			xDiff = (px + pr/2) - (fx[i] + fr/2);
+			yDiff = (py + pr/2) - (fy[i] + fr/2);
+			distSq = xDiff * xDiff + yDiff * yDiff;
+
+			if ( distSq < 0.25 * (pr + fr) * (pr + fr))
+			{
+				System.out.print("player (" + px + "," + py + ") food (" + fx[i] + "," + fy[i] + ") - ");
+                System.out.println("distSq= " + distSq + " pr=" + pr);
+				// EAT!
+				// player gets bigger
+				pr += 1;
+				// player gets slower
+				pv--;
+				if (pv < 2) {
+					pv = 2;
+				}
+				// respawn the food
+				fx[i] = (int) (Math.random()*(3*screen_width)+(-1*screen_width));
+				fy[i] = (int) (Math.random()*(3*screen_height)+(-1*screen_height));
+			}
+
+			fx[i] = fx[i] + pvx;
+			fy[i] = fy[i] + pvy;
+		}
+
+
+
+
+
+
+
+
 	}// end of update method - put code above for any updates on variable
 		
 	
@@ -159,16 +198,26 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			eXs[cntr] = (int)(Math.random()*(screen_width)+0);
 			eYs[cntr] = (int)(Math.random()*(screen_height)+0);
 			eWs[cntr] = 30;
-			eVx[cntr] = (int)(Math.random()*(15)+-7);
+			eVx[cntr] = (int)(Math.random()*(7+1)+0);
 			// add y velocity
-			eVy[cntr] = (int)(Math.random()*(15)+-7);
+			eVy[cntr] = (int)(Math.random()*(7+1)+0);
 			cntr++;
 		}
 		//loops for something i forgot
 		int cntr2 = 0;
+		int red = 0, green = 0, blue = 0;
+		Color newColor;
+
 		while(cntr2< fx.length) {
-			fx[cntr2] = (int) (Math.random()*(screen_width)+0);
-			fy[cntr2] = (int) (Math.random()*(screen_height)+0);
+			fx[cntr2] = (int) (Math.random()*(3*screen_width)+(-1*screen_width));
+			fy[cntr2] = (int) (Math.random()*(3*screen_height)+(-1*screen_height));
+
+			red = (int)(Math.random()*(255+1)+0);
+			green = (int)(Math.random()*(255+1)+0);
+			blue = (int)(Math.random()*(255+1)+0);
+			newColor = new Color(red, green, blue);
+            fc[cntr2] = newColor;
+
 			cntr2++;
 		}
 		
@@ -182,10 +231,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		
 		//colors - are on you! to do - student
 		for (int c = 0; c < eCs.length; c++) {
-			int red = (int)(Math.random()*(255+1)+0);
-			int green = (int)(Math.random()*(255+1)+0);
-			int blue = (int)(Math.random()*(255+1)+0);
-			Color newColor = new Color(red, green, blue);
+			red = (int)(Math.random()*(255+1)+0);
+			green = (int)(Math.random()*(255+1)+0);
+			blue = (int)(Math.random()*(255+1)+0);
+			newColor = new Color(red, green, blue);
 			eCs[c] = newColor;
 		}
 		
@@ -202,24 +251,53 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		System.out.println(e.getKeyCode());
-		if(e.getKeyCode() == 40) {
-			
-		}else if (e.getKeyCode() == 38) {
-			// velocity is going to be how we want objects to move
-			//relative to the player(which is 
-			pvy = 10;
+
+		if (e.getKeyCode() == 32) {
+		    // space button
+		    // shrink player
+		    pr--;
+		    // min player size is 30
+			if (pr < 30) {
+				pr = 30;
+			}
+			// player gets faster
+			pv++;
+
+			if (pvx > 0) {
+				pvx = pv;
+			}
+			else {
+				pvx = -1 * pv;
+			}
+			if (pvy > 0) {
+				pvy = pv;
+			}
+			else {
+				pvy = -1 * pv;
+			}
+
+
 		}
-		
-		System.out.println(e.getKeyCode());
-		if(e.getKeyCode() == 39) {
-			
-		}else if (e.getKeyCode() == 37) {
-			// velocity is going to be how we want objects to move
-			//relative to the player(which is 
-			pvy = 10;
-	}
+
+		// velocity is going to be how we want objects to move
+		// relative to the player
+		if (e.getKeyCode() == 37) {
+			System.out.println("left:" + e.getKeyCode());
+			pvx = pv;
+		}
+ 		else if(e.getKeyCode() == 38) {
+			System.out.println("up:" + e.getKeyCode());
+			pvy = pv;
+
+		} else if (e.getKeyCode() == 39) {
+			System.out.println("right:" + e.getKeyCode());
+			pvx = -1 * pv;
+		}
+		else if(e.getKeyCode() == 40) {
+			System.out.println("down:" + e.getKeyCode());
+			pvy = -1 * pv;
+
+		}
 
 
 	}
@@ -264,30 +342,16 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+        pvx = 0;
+        pvy = 0;
 		
 	}
-	// player velocity variables
-	 int pvx = 0;
-	 int pvy = 0;
 	@Override
 	public void mouseDragged(MouseEvent m) {
-		System.out.println(m.getX()+":" + m.getY());
-		
-		//if mouse is to the left of a player
-		//make player go left ( negative velocityx )
-		
-		if(m.getX()<px){
-			pvx = -10;
-		}else if (m.getX()>px){
-			pvx = 10;
-		}
-		
-		if(m.getX()<py){
-			pvy = -10;
-		}else if (m.getY()>py){
-			pvy = 10;
-		}
+		System.out.println("md: " + m.getX()+":" + m.getY());
 
+
+		System.out.println("px: " + pvx + "py:" + pvy);
 
 	}
 
